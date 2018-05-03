@@ -5,28 +5,30 @@ import java.util.ArrayList;
 
 public class Borrowing {
 
-    private ArrayList<Book> books;
+    private Book[] books;
     private Customer customer;
     private boolean finished;
     private LocalDate borrowedDate;
     private LocalDate returnDate;
 
+    private final int NUMOFLIMIT = 5;
+
     public Borrowing() {
     }
 
     public Borrowing(Customer customer, boolean finished, LocalDate borrowedDate, LocalDate returnDate) {
-        this.books = new ArrayList<>();
+        this.books = new Book[NUMOFLIMIT];
         this.customer = customer;
         this.finished = finished;
         this.borrowedDate = borrowedDate;
         this.returnDate = returnDate;
     }
 
-    public ArrayList<Book> getBooks() {
+    public Book[] getBooks() {
         return books;
     }
 
-    public void setBooks(ArrayList<Book> books) {
+    public void setBooks(Book[] books) {
         this.books = books;
     }
 

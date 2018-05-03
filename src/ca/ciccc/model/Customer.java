@@ -10,6 +10,10 @@ public class Customer extends Person {
     public Customer() {
     }
 
+    public Customer(String firstName, String lastName, LocalDate dateOfBirth) {
+        super(firstName, lastName, dateOfBirth);
+    }
+
     public Customer(String firstName, String lastName, LocalDate dateOfBirth, String id, boolean active) {
         super(firstName, lastName, dateOfBirth);
         this.id = id;
