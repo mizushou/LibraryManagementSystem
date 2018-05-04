@@ -14,6 +14,15 @@ public class Book implements Comparable<Book> {
     public Book() {
     }
 
+    public Book(String title, Author author, int publishedYear, int edition, Genre genre, int numOfCopies) {
+        this.title = title;
+        this.author = author;
+        this.publishedYear = publishedYear;
+        this.edition = edition;
+        this.genre = genre;
+        this.numOfCopies = numOfCopies;
+    }
+
     public Book(String title, Author author, int publishedYear, int edition, String isbn, Genre genre, int numOfCopies, int available) {
         this.title = title;
         this.author = author;

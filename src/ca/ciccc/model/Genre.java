@@ -1,7 +1,7 @@
 package ca.ciccc.model;
 
 public enum Genre {
-    Fiction("Fiction"), NonFiction("Non Fiction"), SciFi("Sci-Fi"), History("History"), Children("Children");
+    Fiction("Fiction"), NonFiction("Non Fiction"), SciFi("Sci-Fi"), Biography("Biography"), History("History"), Children("Children");
 
     private String genre;
 

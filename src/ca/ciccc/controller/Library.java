@@ -4,6 +4,7 @@ import ca.ciccc.model.Book;
 import ca.ciccc.model.Borrowing;
 import ca.ciccc.model.Customer;
 import ca.ciccc.util.IdGenerator;
+import ca.ciccc.util.PseudoIsbnGenerator;
 
 
 import java.util.HashMap;
@@ -46,7 +47,6 @@ public class Library {
         customer.setId(id);
         customer.setActive(true);
 
-        // add customer into customer collection
         colOfCutomers.put(id, customer);
     }
 
@@ -79,15 +79,46 @@ public class Library {
     }
 
     public void addBook(Book book) {
-        String id = book.getAuthor().getFirstName() + book.getAuthor().getLastName() + book.getEdition();
-        colOfBooks.put(id, book);
+
+        String isbn;
+        boolean isDuplicated = false;
+
+        do {
+            isbn = new PseudoIsbnGenerator().generatePseudoIsbn(book.getEdition());
+            isDuplicated = colOfBooks.keySet().contains(isbn);
+        } while (isDuplicated);
+
+        // assign isbn and set available
+        book.setIsbn(isbn);
+        book.setAvailable(book.getNumOfCopies());
+
+        colOfBooks.put(isbn, book);
     }
 
-    public void removeBook(){
+    public void removeBook(String isbn) {
+
+        colOfBooks.remove(isbn);
 
     }
 
     public void displayBook() {
+
+        String outputTitle = String.format("|%-22s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s|%n", "ISBN", "Title", "Author", "Published Year", "Edition", "Genre", "Available");
+        String outputHRule = String.format("+%s+%s+%s+%s+%s+%s+%s+%n", "----------------------", "--------------------", "--------------------", "--------------------", "--------------------" , "--------------------", "--------------------");
+        System.out.println();
+        System.out.printf(outputHRule);
+        System.out.printf(outputTitle);
+        System.out.printf(outputHRule);
+
+        Iterator<String> it = colOfBooks.keySet().iterator();
+
+        while (it.hasNext()) {
+            Book b = colOfBooks.get(it.next());
+            String outputRecord = String.format("|%-22s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s|%n", b.getIsbn(), b.getTitle(), b.getAuthor().getFirstName() + " " + b.getAuthor().getLastName(), b.getPublishedYear(), b.getEdition(), b.getGenre(), b.getAvailable() + "/" + b.getNumOfCopies());
+            System.out.printf(outputRecord);
+        }
+
+        System.out.printf(outputHRule);
 
     }
 
