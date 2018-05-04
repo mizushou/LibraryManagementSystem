@@ -1,9 +1,10 @@
 package ca.ciccc.model;
 
-public class Book implements Comparable<Book>{
+public class Book implements Comparable<Book> {
 
     private String title;
     private Author author;
+    private int publishedYear;
     private int edition;
     private String isbn;
     private Genre genre;
@@ -13,9 +14,10 @@ public class Book implements Comparable<Book>{
     public Book() {
     }
 
-    public Book(String title, Author author, int edition, String isbn, Genre genre, int numOfCopies, int available) {
+    public Book(String title, Author author, int publishedYear, int edition, String isbn, Genre genre, int numOfCopies, int available) {
         this.title = title;
         this.author = author;
+        this.publishedYear = publishedYear;
         this.edition = edition;
         this.isbn = isbn;
         this.genre = genre;
@@ -45,6 +47,14 @@ public class Book implements Comparable<Book>{
 
     public void setEdition(int edition) {
         this.edition = edition;
+    }
+
+    public int getPublishedYear() {
+        return publishedYear;
+    }
+
+    public void setPublishedYear(int publishedYear) {
+        this.publishedYear = publishedYear;
     }
 
     public String getIsbn() {

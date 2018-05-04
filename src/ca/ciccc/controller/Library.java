@@ -78,6 +78,19 @@ public class Library {
 
     }
 
+    public void addBook(Book book) {
+        String id = book.getAuthor().getFirstName() + book.getAuthor().getLastName() + book.getEdition();
+        colOfBooks.put(id, book);
+    }
+
+    public void removeBook(){
+
+    }
+
+    public void displayBook() {
+
+    }
+
     public void setName(String name) {
         this.name = name;
     }
