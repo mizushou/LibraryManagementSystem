@@ -16,10 +16,10 @@ public class Borrowing {
     public Borrowing() {
     }
 
-    public Borrowing(Customer customer, boolean finished, LocalDate borrowedDate, LocalDate returnDate) {
+    public Borrowing(Customer customer, LocalDate borrowedDate, LocalDate returnDate) {
         this.books = new Book[NUMOFLIMIT];
         this.customer = customer;
-        this.finished = finished;
+        this.finished = false;
         this.borrowedDate = borrowedDate;
         this.returnDate = returnDate;
     }

@@ -1,28 +1,57 @@
 package ca.ciccc.main;
 
 import ca.ciccc.controller.Library;
-import ca.ciccc.model.Author;
-import ca.ciccc.model.Book;
-import ca.ciccc.model.Customer;
-import ca.ciccc.model.Genre;
+import ca.ciccc.model.*;
 import ca.ciccc.view.LibraryInputReader;
 
 import java.time.LocalDate;
-
 public class Driver {
+
+    private Library library;
+    private LibraryInputReader input;
 
     public static void main(String[] args) {
         Driver driver = new Driver();
+        driver.initialize();
         driver.run();
+    }
+
+    public void initialize() {
+
+        // Views
+        input = new LibraryInputReader();
+
+        // Settings
+        System.out.println("Setting");
+        String nameOfLibrary = input.getStringInput("Input Library name");
+        library = new Library("nameOfLibrary");
+
+
+        Author a1 = new Author("Joanne", "Rowling", "J. K. Rowling", Genre.Fiction);
+        Author a2 = new Author("William", "Shakespeare", "", Genre.Fiction);
+        Author a3 = new Author("Walter", "Isaacson", "", Genre.NonFiction);
+
+        Book b1 = new Book("Hurry Potter", a1, 1997, 1, Genre.Children, 5);
+        Book b2 = new Book("Romeo and Juliet", a2, 1994, 4, Genre.Fiction, 3);
+        Book b3 = new Book("Steve Jobs", a3, 2011, 3, Genre.Biography, 2);
+
+        library.addBook(b1);
+        library.addBook(b2);
+        library.addBook(b3);
+
+        Customer c1 = new Customer("Mark","Zuckerberg", LocalDate.parse("1984-05-14"));
+        Customer c2 = new Customer("Jeffrey","Bezos", LocalDate.parse("1964-01-12"));
+        Customer c3 = new Customer("Drew","Houston", LocalDate.parse("1983-03-04"));
+
+        library.addCustomer(c1);
+        library.addCustomer(c2);
+        library.addCustomer(c3);
+
     }
 
     public void run() {
 
         boolean isRunning = true;
-        Library library = new Library("VPL");
-
-        // Views
-        LibraryInputReader input = new LibraryInputReader();
 
         while (isRunning) {
 
@@ -137,7 +166,40 @@ public class Driver {
                             break;
                     }
                     break;
-                case 3:
+                case 3: //Borrowing
+                    System.out.println();
+                    System.out.println("-------------");
+                    System.out.println("Borrowing");
+                    System.out.println("-------------");
+                    System.out.println("1 : Borrow");
+                    System.out.println("2 : Display");
+                    System.out.println("3 : Return");
+                    System.out.println();
+
+                    int option3 = input.getIntInput("Input option");
+
+                    switch (option3) {
+                        case 1: //Borrowing - Add
+                            String customerId = input.getStringInput("Input Customer ID");
+                            int numOfBorrowingBooks = input.getIntInput("Input Number of books to borrow [Max : 5 books ]");
+                            if (numOfBorrowingBooks > 5) {
+                                System.out.println("more than max");
+                                break;
+                            }
+                            String[] isbns = new String[numOfBorrowingBooks];
+                            for (int i = 0; i < numOfBorrowingBooks; i++) {
+                                isbns[i] = input.getStringInput();
+                            }
+                            library.borrowBook(customerId, isbns);
+                            break;
+                        case 2: //Borrowing - Display
+                            library.displayBorrowings();
+                            break;
+                        case 3: //Borrowing - Remove
+                            String id = input.getStringInput("Input Customer ID");
+                            library.removeCustomer(id);
+                            break;
+                    }
                     break;
                 case 0:
                     isRunning = false;

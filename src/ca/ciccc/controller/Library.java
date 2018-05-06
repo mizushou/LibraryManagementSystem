@@ -5,19 +5,20 @@ import ca.ciccc.model.Borrowing;
 import ca.ciccc.model.Customer;
 import ca.ciccc.util.IdGenerator;
 import ca.ciccc.util.PseudoIsbnGenerator;
+import com.sun.istack.internal.NotNull;
 
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 
 public class Library {
 
     private String name;
     private HashMap<String, Book> colOfBooks;
     private HashMap<String, Customer> colOfCutomers;
-    private HashMap<String, Borrowing> colOfBorrowings;
+    private ArrayList<Borrowing> colOfBorrowings;
+
+    final private int LENDINGPERIODDAYS = 14;
 
     public Library() {
     }
@@ -26,7 +27,7 @@ public class Library {
         this.name = name;
         this.colOfBooks = new HashMap<>();
         this.colOfCutomers = new HashMap<>();
-        this.colOfBorrowings = new HashMap<>();
+        this.colOfBorrowings = new ArrayList<>();
     }
 
     public String getName() {
@@ -70,7 +71,14 @@ public class Library {
 
         while (it.hasNext()) {
             Customer c = colOfCutomers.get(it.next());
-            String outputRecord = String.format("|%-5s|%-20s|%-20s|%-20s|%-20s|%n", c.getId(), c.getFirstName(), c.getLastName(), c.getDateOfBirth().toString(), c.isActive() ? "active" : "inactive");
+            String outputRecord = String.format(
+                    "|%-5s|%-20s|%-20s|%-20s|%-20s|%n",
+                    c.getId(),
+                    c.getFirstName(),
+                    c.getLastName(),
+                    c.getDateOfBirth().toString(),
+                    c.isActive() ? "active" : "inactive"
+            );
             System.out.printf(outputRecord);
         }
 
@@ -104,7 +112,7 @@ public class Library {
     public void displayBook() {
 
         String outputTitle = String.format("|%-22s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s|%n", "ISBN", "Title", "Author", "Published Year", "Edition", "Genre", "Available");
-        String outputHRule = String.format("+%s+%s+%s+%s+%s+%s+%s+%n", "----------------------", "--------------------", "--------------------", "--------------------", "--------------------" , "--------------------", "--------------------");
+        String outputHRule = String.format("+%s+%s+%s+%s+%s+%s+%s+%n", "----------------------", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------");
         System.out.println();
         System.out.printf(outputHRule);
         System.out.printf(outputTitle);
@@ -114,13 +122,131 @@ public class Library {
 
         while (it.hasNext()) {
             Book b = colOfBooks.get(it.next());
-            String outputRecord = String.format("|%-22s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s|%n", b.getIsbn(), b.getTitle(), b.getAuthor().getFirstName() + " " + b.getAuthor().getLastName(), b.getPublishedYear(), b.getEdition(), b.getGenre(), b.getAvailable() + "/" + b.getNumOfCopies());
+            String outputRecord = String.format(
+                    "|%-22s|%-20s|%-20s|%20s|%20s|%-20s|%20s|%n",
+                    b.getIsbn(), b.getTitle(),
+                    b.getAuthor().getFirstName() + " " + b.getAuthor().getLastName(),
+                    b.getPublishedYear(), b.getEdition(),
+                    b.getGenre(),
+                    b.getAvailable() + "/" + b.getNumOfCopies()
+            );
             System.out.printf(outputRecord);
         }
 
         System.out.printf(outputHRule);
 
     }
+
+    public void borrowBook(String id, String[] isbns) {
+
+        Customer c = colOfCutomers.get(id);
+
+        //1. check customer active
+        if (!c.isActive()) {
+            return;
+        }
+        //2. check book available
+        for (String isbn : isbns) {
+            if (colOfBooks.get(isbn).getAvailable() > 0) continue;
+            return;
+        }
+
+        //3. add borrow
+        LocalDate borrowedDate = LocalDate.now();
+        LocalDate returnDate = borrowedDate.plusDays(LENDINGPERIODDAYS);
+        Borrowing borrow = new Borrowing(c, borrowedDate, returnDate);
+        for (int i = 0; i < isbns.length; i++) {
+            borrow.getBooks()[i] = colOfBooks.get(isbns[i]);
+        }
+
+        colOfBorrowings.add(borrow);
+
+        //4. update the value of copies available from the book
+        for (String isbn : isbns) {
+            colOfBooks.get(isbn).setAvailable(colOfBooks.get(isbn).getAvailable() - 1);
+        }
+    }
+
+    public void displayBorrowings() {
+
+        String outputTitle = String.format("|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s|%n", "Borrowed Date", "Customer ID", "Name", "Number of Books", "Return Date", "Finished");
+        String outputHRule = String.format("+%s+%s+%s+%s+%s+%s+%n", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------");
+        System.out.println();
+        System.out.printf(outputHRule);
+        System.out.printf(outputTitle);
+        System.out.printf(outputHRule);
+
+        Iterator<Borrowing> it = colOfBorrowings.iterator();
+
+        while (it.hasNext()) {
+            Borrowing borrow = it.next();
+
+            int numOfBorrowingBook = 0;
+            for (int i = 0; i < borrow.getBooks().length; i++) {
+                if (borrow.getBooks()[i] == null) {
+                    break;
+                }
+                numOfBorrowingBook++;
+            }
+
+            String outputRecord = String.format(
+                    "|%-20s|%-20s|%-20s|%20s|%-20s|%-20s|%n",
+                    borrow.getBorrowedDate().toString(),
+                    borrow.getCustomer().getId(),
+                    borrow.getCustomer().getFirstName() + " " + borrow.getCustomer().getLastName(),
+                    numOfBorrowingBook,
+                    borrow.getReturnDate(),
+                    borrow.isFinished()
+            );
+            System.out.printf(outputRecord);
+        }
+
+        System.out.printf(outputHRule);
+
+    }
+
+    public void returnBook(String id, String[] isbns) {
+
+        // 1. get the customer's borrowing list
+        ArrayList<Borrowing> borrwingList = new ArrayList<>();
+        borrwingList = getBorrowingList(id);
+
+        // 2. get the customer's borrowing books list
+
+    }
+
+    private ArrayList<Borrowing> getBorrowingList(String id) {
+
+        ArrayList<Borrowing> borrwingList = new ArrayList<>();
+        for (Borrowing borrow : colOfBorrowings) {
+            if (!borrow.getCustomer().getId().equals(id)) continue;
+            borrwingList.add(borrow);
+        }
+
+        return borrwingList;
+
+    }
+
+//    private void getBorrowingBookList(ArrayList<Borrowing> borrwingList, String isbn) {
+//
+//        HashMap<String, Book> borroingBookList = new HashMap<>();
+//
+//        for (Borrowing borrow : borrwingList) {
+//
+//            for (int i = 0; i <; i++) {
+//
+//                if (borrow.getBooks()[i] == null) break;
+//
+//                if (!borrow.getBooks()[i].getIsbn().equals(isbn)) continue;
+//                borrow.getBooks()[i] = null;
+//                colOfBooks.get(isbn).setAvailable(colOfBooks.get(isbn).getAvailable() + 1);
+//
+//            }
+//
+//        }
+//
+//    }
+
 
     public void setName(String name) {
         this.name = name;
@@ -142,11 +268,11 @@ public class Library {
         this.colOfCutomers = colOfCutomers;
     }
 
-    public HashMap<String, Borrowing> getColOfBorrowings() {
+    public ArrayList<Borrowing> getColOfBorrowings() {
         return colOfBorrowings;
     }
 
-    public void setColOfBorrowings(HashMap<String, Borrowing> colOfBorrowings) {
+    public void setColOfBorrowings(ArrayList<Borrowing> colOfBorrowings) {
         this.colOfBorrowings = colOfBorrowings;
     }
 
