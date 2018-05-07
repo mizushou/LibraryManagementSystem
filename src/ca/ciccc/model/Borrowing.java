@@ -2,33 +2,32 @@ package ca.ciccc.model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Borrowing {
 
-    private Book[] books;
+    private HashMap<String, Integer> books;
     private Customer customer;
     private boolean finished;
     private LocalDate borrowedDate;
     private LocalDate returnDate;
 
-    private final int NUMOFLIMIT = 5;
-
     public Borrowing() {
     }
 
     public Borrowing(Customer customer, LocalDate borrowedDate, LocalDate returnDate) {
-        this.books = new Book[NUMOFLIMIT];
+        this.books = new HashMap<>();
         this.customer = customer;
         this.finished = false;
         this.borrowedDate = borrowedDate;
         this.returnDate = returnDate;
     }
 
-    public Book[] getBooks() {
+    public HashMap<String, Integer> getBooks() {
         return books;
     }
 
-    public void setBooks(Book[] books) {
+    public void setBooks(HashMap<String, Integer> books) {
         this.books = books;
     }
 

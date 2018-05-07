@@ -5,6 +5,7 @@ import ca.ciccc.model.*;
 import ca.ciccc.view.LibraryInputReader;
 
 import java.time.LocalDate;
+
 public class Driver {
 
     private Library library;
@@ -39,9 +40,9 @@ public class Driver {
         library.addBook(b2);
         library.addBook(b3);
 
-        Customer c1 = new Customer("Mark","Zuckerberg", LocalDate.parse("1984-05-14"));
-        Customer c2 = new Customer("Jeffrey","Bezos", LocalDate.parse("1964-01-12"));
-        Customer c3 = new Customer("Drew","Houston", LocalDate.parse("1983-03-04"));
+        Customer c1 = new Customer("Mark", "Zuckerberg", LocalDate.parse("1984-05-14"));
+        Customer c2 = new Customer("Jeffrey", "Bezos", LocalDate.parse("1964-01-12"));
+        Customer c3 = new Customer("Drew", "Houston", LocalDate.parse("1983-03-04"));
 
         library.addCustomer(c1);
         library.addCustomer(c2);
@@ -74,8 +75,9 @@ public class Driver {
                     System.out.println("Catalogue");
                     System.out.println("-------------");
                     System.out.println("1 : Add");
-                    System.out.println("2 : Display");
-                    System.out.println("3 : Remove");
+                    System.out.println("2 : Display Catalogue");
+                    System.out.println("3 : Display Catalogue With ID");
+                    System.out.println("4 : Remove");
                     System.out.println();
 
                     int option1 = input.getIntInput("Input option");
@@ -130,7 +132,10 @@ public class Driver {
                         case 2: //Book - Display
                             library.displayBook();
                             break;
-                        case 3: //Book - Remove
+                        case 3:
+                            library.displayBookWithId();
+                            break;
+                        case 4: //Book - Remove
                             String isbn = input.getStringInput("Input Book ISBN");
                             library.removeBook(isbn);
                             break;
@@ -179,7 +184,7 @@ public class Driver {
                     int option3 = input.getIntInput("Input option");
 
                     switch (option3) {
-                        case 1: //Borrowing - Add
+                        case 1: //Borrowing - Borrow
                             String customerId = input.getStringInput("Input Customer ID");
                             int numOfBorrowingBooks = input.getIntInput("Input Number of books to borrow [Max : 5 books ]");
                             if (numOfBorrowingBooks > 5) {
@@ -190,14 +195,19 @@ public class Driver {
                             for (int i = 0; i < numOfBorrowingBooks; i++) {
                                 isbns[i] = input.getStringInput();
                             }
-                            library.borrowBook(customerId, isbns);
+                            library.borrowAllBooks(customerId, isbns);
                             break;
                         case 2: //Borrowing - Display
                             library.displayBorrowings();
                             break;
-                        case 3: //Borrowing - Remove
+                        case 3: //Borrowing - Return
                             String id = input.getStringInput("Input Customer ID");
-                            library.removeCustomer(id);
+                            int numOfReturnBooks = input.getIntInput("Input Number of books to return");
+                            String[] isbns2 = new String[numOfReturnBooks];
+                            for (int i = 0; i < numOfReturnBooks; i++) {
+                                isbns2[i] = input.getStringInput();
+                            }
+                            library.returnAllBooks(id, isbns2);
                             break;
                     }
                     break;
