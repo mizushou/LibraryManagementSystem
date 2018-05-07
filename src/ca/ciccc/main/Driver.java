@@ -146,7 +146,15 @@ public class Driver {
                             library.displayBook();
                             break;
                         case 3:
-                            library.displayCatalogue();
+                            System.out.println("Select Display option");
+                            System.out.println("-------------");
+                            System.out.println("Display Option");
+                            System.out.println("-------------");
+                            System.out.println("1 : No sort");
+                            System.out.println("2 : Sort by edition");
+                            System.out.println("3 : Sort by year");
+                            int diplayNum = input.getIntInput("Input Number of copies");
+                            library.displayCatalogue(diplayNum);
                             break;
                         case 4: //Book - Remove
                             int id = input.getIntInput("Input Book ISBN");

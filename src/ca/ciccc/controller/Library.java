@@ -1,5 +1,6 @@
 package ca.ciccc.controller;
 
+import ca.ciccc.comparator.CatalogueSortByYearComparator;
 import ca.ciccc.model.Book;
 import ca.ciccc.model.Borrowing;
 import ca.ciccc.model.Catalogue;
@@ -103,11 +104,17 @@ public class Library {
 
         }
 
+        // refresh catalogue table
+        makeColOfCatalogue();
+
     }
 
     public void removeBook(int id) {
 
         colOfBooks.remove(id);
+
+        // refresh catalogue table
+        makeColOfCatalogue();
 
     }
 
@@ -142,9 +149,149 @@ public class Library {
 
     }
 
-    public void displayCatalogue() {
+    public void displayCatalogue(int option) {
 
-        // 1.
+        switch (option) {
+            case 1:
+                displayCatalogueWithoutSorting();
+                break;
+            case 2:
+                displayCatalogueSortedBy​Editon();
+                break;
+            case 3:
+                displayCatalogueSortedBy​PublishedYear();
+                break;
+        }
+
+    }
+
+    private void displayCatalogueWithoutSorting() {
+
+        String outputTitle = String.format("|%-22s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s|%n", "ISBN", "Title", "Author", "Published Year", "Edition", "Genre", "Available");
+        String outputHRule = String.format("+%s+%s+%s+%s+%s+%s+%s+%n", "----------------------", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------");
+        System.out.println();
+        System.out.printf(outputHRule);
+        System.out.printf(outputTitle);
+        System.out.printf(outputHRule);
+
+        Set<String> keys = colOfCatalogue.keySet();
+        ArrayList<String> keyList = new ArrayList<>(keys);
+        Iterator<String> it = keyList.iterator();
+        while (it.hasNext()) {
+            String isbn = it.next();
+            Catalogue c = colOfCatalogue.get(isbn);
+
+            String outputRecord = String.format(
+                    "|%-22s|%-20s|%-20s|%20s|%20s|%-20s|%20s|%n",
+                    c.getIsbn(),
+                    c.getTitle(),
+                    c.getAuthor().getFirstName() + " " + c.getAuthor().getLastName(),
+                    c.getPublishedYear(),
+                    c.getEdition(),
+                    c.getGenre(),
+                    c.getAvailable() + "/" + c.getNumOfCopies()
+            );
+            System.out.printf(outputRecord);
+        }
+
+        System.out.printf(outputHRule);
+
+    }
+
+    private void displayCatalogueSortedBy​Editon() {
+
+        Collection<Catalogue> catalogues = colOfCatalogue.values();
+        ArrayList<Catalogue> catalogueList = new ArrayList<>(catalogues);
+
+        Collections.sort(catalogueList);
+
+        String outputTitle = String.format("|%-22s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s|%n", "ISBN", "Title", "Author", "Published Year", "Edition", "Genre", "Available");
+        String outputHRule = String.format("+%s+%s+%s+%s+%s+%s+%s+%n", "----------------------", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------");
+        System.out.println();
+        System.out.printf(outputHRule);
+        System.out.printf(outputTitle);
+        System.out.printf(outputHRule);
+
+        for (Catalogue c : catalogueList) {
+            String outputRecord = String.format(
+                    "|%-22s|%-20s|%-20s|%20s|%20s|%-20s|%20s|%n",
+                    c.getIsbn(),
+                    c.getTitle(),
+                    c.getAuthor().getFirstName() + " " + c.getAuthor().getLastName(),
+                    c.getPublishedYear(),
+                    c.getEdition(),
+                    c.getGenre(),
+                    c.getAvailable() + "/" + c.getNumOfCopies()
+            );
+            System.out.printf(outputRecord);
+        }
+
+        System.out.printf(outputHRule);
+
+    }
+
+    private void displayCatalogueSortedBy​PublishedYear() {
+
+        Collection<Catalogue> catalogues = colOfCatalogue.values();
+        ArrayList<Catalogue> catalogueList = new ArrayList<>(catalogues);
+
+        Collections.sort(catalogueList, new CatalogueSortByYearComparator());
+
+        String outputTitle = String.format("|%-22s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s|%n", "ISBN", "Title", "Author", "Published Year", "Edition", "Genre", "Available");
+        String outputHRule = String.format("+%s+%s+%s+%s+%s+%s+%s+%n", "----------------------", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------");
+        System.out.println();
+        System.out.printf(outputHRule);
+        System.out.printf(outputTitle);
+        System.out.printf(outputHRule);
+
+        for (Catalogue c : catalogueList) {
+            String outputRecord = String.format(
+                    "|%-22s|%-20s|%-20s|%20s|%20s|%-20s|%20s|%n",
+                    c.getIsbn(),
+                    c.getTitle(),
+                    c.getAuthor().getFirstName() + " " + c.getAuthor().getLastName(),
+                    c.getPublishedYear(),
+                    c.getEdition(),
+                    c.getGenre(),
+                    c.getAvailable() + "/" + c.getNumOfCopies()
+            );
+            System.out.printf(outputRecord);
+        }
+
+        System.out.printf(outputHRule);
+
+    }
+
+    private void makeColOfCatalogue() {
+
+        HashMap<String, Book> tempCatalogue = makeTempCatalogue();
+
+        HashMap<String, Integer> copies = getNumOfCopies(tempCatalogue);
+        HashMap<String, Integer> available = getNumOfAvailable(tempCatalogue);
+
+        Iterator it = tempCatalogue.keySet().iterator();
+        while (it.hasNext()) {
+            String isbn = (String) it.next();
+            Book b = tempCatalogue.get(isbn);
+
+            Catalogue catalogue = new Catalogue(
+                    b.getTitle(),
+                    b.getAuthor(),
+                    b.getPublishedYear(),
+                    b.getEdition(),
+                    b.getIsbn(),
+                    b.getGenre(),
+                    copies.get(isbn),
+                    available.get(isbn)
+            );
+
+            colOfCatalogue.put(isbn, catalogue);
+        }
+
+    }
+
+    private HashMap<String, Book> makeTempCatalogue() {
+
         Collection<Book> books = colOfBooks.values();
         ArrayList<Book> booksList = new ArrayList<>(books);
         HashMap<String, Book> tempCatalogue = new HashMap<>();
@@ -152,9 +299,16 @@ public class Library {
             tempCatalogue.put(booksList.get(i).getIsbn(), booksList.get(i));
         }
 
+        return tempCatalogue;
+    }
+
+    private HashMap<String, Integer> getNumOfCopies(HashMap<String, Book> tempCatalogue) {
+
+        Collection<Book> books = colOfBooks.values();
+        ArrayList<Book> booksList = new ArrayList<>(books);
+
         Iterator it = tempCatalogue.keySet().iterator();
         HashMap<String, Integer> copies = new HashMap<>();
-        HashMap<String, Integer> available = new HashMap<>();
         while (it.hasNext()) {
             String isbn = (String) it.next();
             for (int i = 0; i < booksList.size(); i++) {
@@ -166,6 +320,22 @@ public class Library {
                     } else {
                         copies.put(booksList.get(i).getIsbn(), 1);
                     }
+                }
+            }
+        }
+        return copies;
+    }
+
+    private HashMap<String, Integer> getNumOfAvailable(HashMap<String, Book> tempCatalogue) {
+        Collection<Book> books = colOfBooks.values();
+        ArrayList<Book> booksList = new ArrayList<>(books);
+
+        Iterator it = tempCatalogue.keySet().iterator();
+        HashMap<String, Integer> available = new HashMap<>();
+        while (it.hasNext()) {
+            String isbn = (String) it.next();
+            for (int i = 0; i < booksList.size(); i++) {
+                if (booksList.get(i).getIsbn().equals(isbn)) {
 
                     // available
                     if (booksList.get(i).getAvailable()) {
@@ -180,52 +350,7 @@ public class Library {
                 }
             }
         }
-
-        String outputTitle = String.format("|%-22s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s|%n", "ISBN", "Title", "Author", "Published Year", "Edition", "Genre", "Available");
-        String outputHRule = String.format("+%s+%s+%s+%s+%s+%s+%s+%n", "----------------------", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------");
-        System.out.println();
-        System.out.printf(outputHRule);
-        System.out.printf(outputTitle);
-        System.out.printf(outputHRule);
-
-        // 2.
-        Iterator it2 = tempCatalogue.keySet().iterator();
-        while (it2.hasNext()) {
-            String isbn = (String) it2.next();
-            Book b = tempCatalogue.get(isbn);
-
-            Catalogue catalogue = new Catalogue(
-                    b.getTitle(),
-                    b.getAuthor(),
-                    b.getPublishedYear(),
-                    b.getEdition(), b.getIsbn(),
-                    b.getGenre(), copies.get(isbn),
-                    available.get(isbn)
-            );
-
-            colOfCatalogue.put(isbn, catalogue);
-        }
-
-        // 3.
-        Iterator it3 = colOfCatalogue.keySet().iterator();
-        while (it3.hasNext()) {
-            String isbn = (String) it3.next();
-            Catalogue c = colOfCatalogue.get(isbn);
-
-            String outputRecord = String.format(
-                    "|%-22s|%-20s|%-20s|%20s|%20s|%-20s|%20s|%n",
-                    c.getIsbn(),
-                    c.getTitle(),
-                    c.getAuthor().getFirstName() + " " + c.getAuthor().getLastName(),
-                    c.getPublishedYear(), c.getEdition(),
-                    c.getGenre(),
-                    available.get(isbn) + "/" + copies.get(isbn)
-            );
-            System.out.printf(outputRecord);
-        }
-
-        System.out.printf(outputHRule);
-
+        return available;
     }
 
     public void borrowBooks(String customerId, int[] bookIds) {
@@ -260,6 +385,10 @@ public class Library {
         for (int bookId : bookIds) {
             colOfBooks.get(bookId).setAvailable(false);
         }
+
+        //5. refresh catalogue table
+        makeColOfCatalogue();
+
     }
 
     public void displayBorrowings() {
@@ -297,25 +426,29 @@ public class Library {
 
     public void returnAllBooks(String customerId, int[] bookIds) {
 
-        // 1. get the customer's borrowing list
+        //1. get the customer's borrowing list
         ArrayList<Borrowing> borrowingList;
         borrowingList = getBorrowingList(customerId);
 
-        // 2.
+        //2.
         for (int bookId : bookIds) {
             returnBook(bookId, borrowingList);
         }
 
-        // 3.
+        //3.
         for (int bookId : bookIds) {
             colOfBooks.get(bookId).setAvailable(true);
         }
 
-        // 4.
+        //4.
         for (Borrowing borrow : borrowingList) {
             if (getSumOfBorrowingBook(borrow) != 0) continue;
             borrow.setFinished(true);
         }
+
+        //5. refresh catalogue table
+        makeColOfCatalogue();
+
 
     }
 

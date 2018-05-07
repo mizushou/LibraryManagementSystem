@@ -1,6 +1,6 @@
 package ca.ciccc.model;
 
-public class Catalogue {
+public class Catalogue implements Comparable<Catalogue> {
 
     private String title;
     private Author author;
@@ -84,5 +84,10 @@ public class Catalogue {
 
     public void setAvailable(int available) {
         this.available = available;
+    }
+
+    @Override
+    public int compareTo(Catalogue o) {
+        return this.edition - o.edition;
     }
 }
