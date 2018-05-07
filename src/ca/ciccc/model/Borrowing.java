@@ -1,12 +1,11 @@
 package ca.ciccc.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Borrowing {
 
-    private HashMap<String, Integer> books;
+    private HashMap<Integer, Integer> books;
     private Customer customer;
     private boolean finished;
     private LocalDate borrowedDate;
@@ -23,11 +22,11 @@ public class Borrowing {
         this.returnDate = returnDate;
     }
 
-    public HashMap<String, Integer> getBooks() {
+    public HashMap<Integer, Integer> getBooks() {
         return books;
     }
 
-    public void setBooks(HashMap<String, Integer> books) {
+    public void setBooks(HashMap<Integer, Integer> books) {
         this.books = books;
     }
 

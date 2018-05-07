@@ -32,13 +32,22 @@ public class Driver {
         Author a2 = new Author("William", "Shakespeare", "", Genre.Fiction);
         Author a3 = new Author("Walter", "Isaacson", "", Genre.NonFiction);
 
-        Book b1 = new Book("Hurry Potter", a1, 1997, 1, Genre.Children, 5);
-        Book b2 = new Book("Romeo and Juliet", a2, 1994, 4, Genre.Fiction, 3);
-        Book b3 = new Book("Steve Jobs", a3, 2011, 3, Genre.Biography, 2);
+        Book[] books1 = new Book[3];
+        Book[] books2 = new Book[2];
+        Book[] books3 = new Book[4];
+        books1[0] = new Book("Hurry Potter", a1, 1997, 1, Genre.Children);
+        books1[1] = new Book("Hurry Potter", a1, 1997, 1, Genre.Children);
+        books1[2] = new Book("Hurry Potter", a1, 1997, 1, Genre.Children);
+        books2[0] = new Book("Romeo and Juliet", a2, 1994, 4, Genre.Fiction);
+        books2[1] = new Book("Romeo and Juliet", a2, 1994, 4, Genre.Fiction);
+        books3[0] = new Book("Steve Jobs", a3, 2011, 3, Genre.Biography);
+        books3[1] = new Book("Steve Jobs", a3, 2011, 3, Genre.Biography);
+        books3[2] = new Book("Steve Jobs", a3, 2011, 3, Genre.Biography);
+        books3[3] = new Book("Steve Jobs", a3, 2011, 3, Genre.Biography);
 
-        library.addBook(b1);
-        library.addBook(b2);
-        library.addBook(b3);
+        library.addBook(books1);
+        library.addBook(books2);
+        library.addBook(books3);
 
         Customer c1 = new Customer("Mark", "Zuckerberg", LocalDate.parse("1984-05-14"));
         Customer c2 = new Customer("Jeffrey", "Bezos", LocalDate.parse("1964-01-12"));
@@ -75,8 +84,8 @@ public class Driver {
                     System.out.println("Catalogue");
                     System.out.println("-------------");
                     System.out.println("1 : Add");
-                    System.out.println("2 : Display Catalogue");
-                    System.out.println("3 : Display Catalogue With ID");
+                    System.out.println("2 : Display All Books");
+                    System.out.println("3 : Display Catalogue");
                     System.out.println("4 : Remove");
                     System.out.println();
 
@@ -126,18 +135,22 @@ public class Driver {
                             int editon = input.getIntInput("Input Number of Edition [ex) 2nd -> 2]");
                             int numOfCopies = input.getIntInput("Input Number of copies");
 
-                            Book book = new Book(title, author, publishedYear, editon, genre, numOfCopies);
-                            library.addBook(book);
+                            Book[] books = new Book[numOfCopies];
+                            for (int i = 0; i < numOfCopies; i++) {
+                                books[i] = new Book(title, author, publishedYear, editon, genre);
+                            }
+
+                            library.addBook(books);
                             break;
                         case 2: //Book - Display
                             library.displayBook();
                             break;
                         case 3:
-                            library.displayBookWithId();
+                            library.displayCatalogue();
                             break;
                         case 4: //Book - Remove
-                            String isbn = input.getStringInput("Input Book ISBN");
-                            library.removeBook(isbn);
+                            int id = input.getIntInput("Input Book ISBN");
+                            library.removeBook(id);
                             break;
                     }
                     break;
@@ -191,11 +204,11 @@ public class Driver {
                                 System.out.println("more than max");
                                 break;
                             }
-                            String[] isbns = new String[numOfBorrowingBooks];
+                            int[] bookIds = new int[numOfBorrowingBooks];
                             for (int i = 0; i < numOfBorrowingBooks; i++) {
-                                isbns[i] = input.getStringInput();
+                                bookIds[i] = input.getIntInput();
                             }
-                            library.borrowAllBooks(customerId, isbns);
+                            library.borrowBooks(customerId, bookIds);
                             break;
                         case 2: //Borrowing - Display
                             library.displayBorrowings();
@@ -203,11 +216,11 @@ public class Driver {
                         case 3: //Borrowing - Return
                             String id = input.getStringInput("Input Customer ID");
                             int numOfReturnBooks = input.getIntInput("Input Number of books to return");
-                            String[] isbns2 = new String[numOfReturnBooks];
+                            int[] bookIds2 = new int[numOfReturnBooks];
                             for (int i = 0; i < numOfReturnBooks; i++) {
-                                isbns2[i] = input.getStringInput();
+                                bookIds2[i] = input.getIntInput();
                             }
-                            library.returnAllBooks(id, isbns2);
+                            library.returnAllBooks(id, bookIds2);
                             break;
                     }
                     break;
