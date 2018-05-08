@@ -69,7 +69,7 @@ public class Driver {
             System.out.println("-------------");
             System.out.println("Main menu");
             System.out.println("-------------");
-            System.out.println("1 : Catalogue");
+            System.out.println("1 : Book");
             System.out.println("2 : Customer");
             System.out.println("3 : Borrowing");
             System.out.println("0 : Exit");
@@ -81,12 +81,12 @@ public class Driver {
                 case 1: //Book
                     System.out.println();
                     System.out.println("-------------");
-                    System.out.println("Catalogue");
+                    System.out.println("Book");
                     System.out.println("-------------");
-                    System.out.println("1 : Add");
+                    System.out.println("1 : Add Book");
                     System.out.println("2 : Display All Books");
                     System.out.println("3 : Display Catalogue");
-                    System.out.println("4 : Remove");
+                    System.out.println("4 : Remove Book");
                     System.out.println();
 
                     int option1 = input.getIntInput("Input option");
@@ -157,7 +157,7 @@ public class Driver {
                             library.displayCatalogue(diplayNum);
                             break;
                         case 4: //Book - Remove
-                            int id = input.getIntInput("Input Book ISBN");
+                            int id = input.getIntInput("Input Book ID");
                             library.removeBook(id);
                             break;
                     }
@@ -167,9 +167,11 @@ public class Driver {
                     System.out.println("-------------");
                     System.out.println("Customer");
                     System.out.println("-------------");
-                    System.out.println("1 : Add");
-                    System.out.println("2 : Display");
-                    System.out.println("3 : Remove");
+                    System.out.println("1 : Add Customer");
+                    System.out.println("2 : Display Customers");
+                    System.out.println("3 : Activate Customers");
+                    System.out.println("4 : Inactivate Customers");
+                    System.out.println("5 : Remove Customer");
                     System.out.println();
 
                     int option2 = input.getIntInput("Input option");
@@ -186,9 +188,17 @@ public class Driver {
                         case 2: //Customer - Display
                             library.displayCustomers();
                             break;
-                        case 3: //Customer - Remove
-                            String id = input.getStringInput("Input Customer ID");
-                            library.removeCustomer(id);
+                        case 3: //Customer - Activate
+                            String activateId = input.getStringInput("Input Customer ID");
+                            library.activateCustomer(activateId);
+                            break;
+                        case 4: //Customer - Inactivate
+                            String inActivateId = input.getStringInput("Input Customer ID");
+                            library.inActivateCustomer(inActivateId);
+                            break;
+                        case 5: //Customer - Remove
+                            String removeId = input.getStringInput("Input Customer ID");
+                            library.removeCustomer(removeId);
                             break;
                     }
                     break;

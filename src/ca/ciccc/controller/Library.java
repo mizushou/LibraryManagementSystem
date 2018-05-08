@@ -1,6 +1,5 @@
 package ca.ciccc.controller;
 
-import ca.ciccc.comparator.CatalogueSortByYearComparator;
 import ca.ciccc.model.Book;
 import ca.ciccc.model.Borrowing;
 import ca.ciccc.model.Catalogue;
@@ -82,6 +81,14 @@ public class Library {
 
         System.out.printf(outputHRule);
 
+    }
+
+    public void activateCustomer(String customerID) {
+        colOfCustomers.get(customerID).setActive(true);
+    }
+
+    public void inActivateCustomer(String customerID) {
+        colOfCustomers.get(customerID).setActive(false);
     }
 
     public void addBook(Book[] books) {
@@ -235,7 +242,7 @@ public class Library {
         Collection<Catalogue> catalogues = colOfCatalogue.values();
         ArrayList<Catalogue> catalogueList = new ArrayList<>(catalogues);
 
-        Collections.sort(catalogueList, new CatalogueSortByYearComparator());
+        Collections.sort(catalogueList, ((o1, o2) -> o2.getPublishedYear() - o1.getPublishedYear()));
 
         String outputTitle = String.format("|%-22s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s|%n", "ISBN", "Title", "Author", "Published Year", "Edition", "Genre", "Available");
         String outputHRule = String.format("+%s+%s+%s+%s+%s+%s+%s+%n", "----------------------", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------", "--------------------");
