@@ -352,9 +352,10 @@ public class Library {
                             available.put(booksList.get(i).getIsbn(), 1);
                         }
                     }
-
-
                 }
+            }
+            if (!available.containsKey(isbn)) {
+                available.put(isbn, 0);
             }
         }
         return available;
