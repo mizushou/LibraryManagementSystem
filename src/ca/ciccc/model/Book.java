@@ -2,16 +2,27 @@ package ca.ciccc.model;
 
 public class Book implements Comparable<Book> {
 
+    private int id;
     private String title;
     private Author author;
     private int publishedYear;
     private int edition;
     private String isbn;
     private Genre genre;
-    private int numOfCopies;
-    private int available;
+    private boolean available;
+
+    static private int count = 10000;
 
     public Book() {
+    }
+
+    public Book(String title, Author author, int publishedYear, int edition, Genre genre) {
+        this.id = ++count;
+        this.title = title;
+        this.author = author;
+        this.publishedYear = publishedYear;
+        this.edition = edition;
+        this.genre = genre;
     }
 
     public Book(String title, Author author, int publishedYear, int edition, Genre genre, int numOfCopies) {
@@ -20,18 +31,17 @@ public class Book implements Comparable<Book> {
         this.publishedYear = publishedYear;
         this.edition = edition;
         this.genre = genre;
-        this.numOfCopies = numOfCopies;
     }
 
-    public Book(String title, Author author, int publishedYear, int edition, String isbn, Genre genre, int numOfCopies, int available) {
+    public Book(String title, Author author, int publishedYear, int edition, String isbn, Genre genre, int numOfCopies, boolean available, int id) {
         this.title = title;
         this.author = author;
         this.publishedYear = publishedYear;
         this.edition = edition;
         this.isbn = isbn;
         this.genre = genre;
-        this.numOfCopies = numOfCopies;
         this.available = available;
+        this.id = id;
     }
 
     public String getTitle() {
@@ -82,20 +92,20 @@ public class Book implements Comparable<Book> {
         this.genre = genre;
     }
 
-    public int getNumOfCopies() {
-        return numOfCopies;
-    }
-
-    public void setNumOfCopies(int numOfCopies) {
-        this.numOfCopies = numOfCopies;
-    }
-
-    public int getAvailable() {
+    public boolean getAvailable() {
         return available;
     }
 
-    public void setAvailable(int available) {
+    public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
@@ -106,7 +116,6 @@ public class Book implements Comparable<Book> {
                 ", edition=" + edition +
                 ", isbn='" + isbn + '\'' +
                 ", genre=" + genre +
-                ", numOfCopies=" + numOfCopies +
                 ", available=" + available +
                 '}';
     }
