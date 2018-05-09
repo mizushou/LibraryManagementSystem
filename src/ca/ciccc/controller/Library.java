@@ -363,14 +363,26 @@ public class Library {
 
     public void borrowBooks(String customerId, int[] bookIds) {
 
-        Customer c = colOfCustomers.get(customerId);
-
-        //1. check customer active
-        if (!c.isActive()) {
+        //1. check Customer ID exists
+        if (!colOfCustomers.containsKey(customerId)) {
+            System.out.println("Customer ID : [" + customerId + "] dosen't exist.");
             return;
         }
-        //2. check book available
+
+        Customer c = colOfCustomers.get(customerId);
+
+        //2. check customer active
+        if (!c.isActive()) {
+            System.out.println("Customer ID : [" + customerId + "] is not Active");
+            return;
+        }
+        //3. check book available
         for (int bookId : bookIds) {
+            // check Book ID exists
+            if (!colOfBooks.containsKey(bookId)) {
+                System.out.println("The Book ID [" + bookId + "] dosen't exist.");
+                return;
+            }
             if (colOfCatalogue.get(colOfBooks.get(bookId).getIsbn()).getAvailable() > 0) continue;
             return;
         }
@@ -434,29 +446,39 @@ public class Library {
 
     public void returnAllBooks(String customerId, int[] bookIds) {
 
-        //1. get the customer's borrowing list
+        //1. check Customer ID exists
+        if (!colOfCustomers.containsKey(customerId)) {
+            System.out.println("Customer ID : [" + customerId + "] dosen't exist.");
+            return;
+        }
+
+        //2. get the customer's borrowing list
         ArrayList<Borrowing> borrowingList;
         borrowingList = getBorrowingList(customerId);
 
-        //2.
+        //3.
         for (int bookId : bookIds) {
+            // check Book ID exists
+            if (!colOfBooks.containsKey(bookId)) {
+                System.out.println("The Book ID [" + bookId + "] dosen't exist.");
+                return;
+            }
             returnBook(bookId, borrowingList);
         }
 
-        //3.
+        //4.
         for (int bookId : bookIds) {
             colOfBooks.get(bookId).setAvailable(true);
         }
 
-        //4.
+        //5.
         for (Borrowing borrow : borrowingList) {
             if (getSumOfBorrowingBook(borrow) != 0) continue;
             borrow.setFinished(true);
         }
 
-        //5. refresh catalogue table
+        //6. refresh catalogue table
         makeColOfCatalogue();
-
 
     }
 

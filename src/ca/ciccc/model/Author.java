@@ -1,5 +1,7 @@
 package ca.ciccc.model;
 
+import ca.ciccc.exception.IvalidArgumentException;
+
 import java.time.LocalDate;
 
 public class Author extends Person {
@@ -10,13 +12,13 @@ public class Author extends Person {
     public Author() {
     }
 
-    public Author(String firstName, String lastName, String pseudonym, Genre specialty) {
+    public Author(String firstName, String lastName, String pseudonym, Genre specialty) throws IvalidArgumentException {
         super(firstName, lastName, null);
         this.pseudonym = pseudonym;
         this.specialty = specialty;
     }
 
-    public Author(String firstName, String lastName, LocalDate dateOfBirth, String pseudonym, Genre specialty) {
+    public Author(String firstName, String lastName, LocalDate dateOfBirth, String pseudonym, Genre specialty) throws IvalidArgumentException {
         super(firstName, lastName, dateOfBirth);
         this.pseudonym = pseudonym;
         this.specialty = specialty;

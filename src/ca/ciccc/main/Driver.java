@@ -1,10 +1,12 @@
 package ca.ciccc.main;
 
 import ca.ciccc.controller.Library;
+import ca.ciccc.exception.IvalidArgumentException;
 import ca.ciccc.model.*;
 import ca.ciccc.view.LibraryInputReader;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class Driver {
 
@@ -28,34 +30,40 @@ public class Driver {
         library = new Library("nameOfLibrary");
 
 
-        Author a1 = new Author("Joanne", "Rowling", "J. K. Rowling", Genre.Fiction);
-        Author a2 = new Author("William", "Shakespeare", "", Genre.Fiction);
-        Author a3 = new Author("Walter", "Isaacson", "", Genre.NonFiction);
+        try {
+            Author a1 = new Author("Joanne", "Rowling", "J. K. Rowling", Genre.Fiction);
+            Author a2 = new Author("William", "Shakespeare", "", Genre.Fiction);
+            Author a3 = new Author("Walter", "Isaacson", "", Genre.NonFiction);
+            Book[] books1 = new Book[3];
+            Book[] books2 = new Book[2];
+            Book[] books3 = new Book[4];
+            books1[0] = new Book("Hurry Potter", a1, 1997, 1, Genre.Children);
+            books1[1] = new Book("Hurry Potter", a1, 1997, 1, Genre.Children);
+            books1[2] = new Book("Hurry Potter", a1, 1997, 1, Genre.Children);
+            books2[0] = new Book("Romeo and Juliet", a2, 1994, 4, Genre.Fiction);
+            books2[1] = new Book("Romeo and Juliet", a2, 1994, 4, Genre.Fiction);
+            books3[0] = new Book("Steve Jobs", a3, 2011, 3, Genre.Biography);
+            books3[1] = new Book("Steve Jobs", a3, 2011, 3, Genre.Biography);
+            books3[2] = new Book("Steve Jobs", a3, 2011, 3, Genre.Biography);
+            books3[3] = new Book("Steve Jobs", a3, 2011, 3, Genre.Biography);
 
-        Book[] books1 = new Book[3];
-        Book[] books2 = new Book[2];
-        Book[] books3 = new Book[4];
-        books1[0] = new Book("Hurry Potter", a1, 1997, 1, Genre.Children);
-        books1[1] = new Book("Hurry Potter", a1, 1997, 1, Genre.Children);
-        books1[2] = new Book("Hurry Potter", a1, 1997, 1, Genre.Children);
-        books2[0] = new Book("Romeo and Juliet", a2, 1994, 4, Genre.Fiction);
-        books2[1] = new Book("Romeo and Juliet", a2, 1994, 4, Genre.Fiction);
-        books3[0] = new Book("Steve Jobs", a3, 2011, 3, Genre.Biography);
-        books3[1] = new Book("Steve Jobs", a3, 2011, 3, Genre.Biography);
-        books3[2] = new Book("Steve Jobs", a3, 2011, 3, Genre.Biography);
-        books3[3] = new Book("Steve Jobs", a3, 2011, 3, Genre.Biography);
+            library.addBook(books1);
+            library.addBook(books2);
+            library.addBook(books3);
+        } catch (IvalidArgumentException e) {
+            System.out.println(e.getMessage());
+        }
 
-        library.addBook(books1);
-        library.addBook(books2);
-        library.addBook(books3);
-
-        Customer c1 = new Customer("Mark", "Zuckerberg", LocalDate.parse("1984-05-14"));
-        Customer c2 = new Customer("Jeffrey", "Bezos", LocalDate.parse("1964-01-12"));
-        Customer c3 = new Customer("Drew", "Houston", LocalDate.parse("1983-03-04"));
-
-        library.addCustomer(c1);
-        library.addCustomer(c2);
-        library.addCustomer(c3);
+        try {
+            Customer c1 = new Customer("Mark", "Zuckerberg", LocalDate.parse("1984-05-14"));
+            Customer c2 = new Customer("Jeffrey", "Bezos", LocalDate.parse("1964-01-12"));
+            Customer c3 = new Customer("Drew", "Houston", LocalDate.parse("1983-03-04"));
+            library.addCustomer(c1);
+            library.addCustomer(c2);
+            library.addCustomer(c3);
+        } catch (IvalidArgumentException e) {
+            System.out.println(e.getMessage());
+        }
 
     }
 
@@ -129,11 +137,22 @@ public class Driver {
                                     break;
                             }
 
-                            Author author = new Author(firstName, lastName, pseudonym, genre);
+                            Author author = null;
+                            try {
+                                author = new Author(firstName, lastName, pseudonym, genre);
+                            } catch (IvalidArgumentException e) {
+                                e.getMessage();
+                                break;
+                            }
 
                             int publishedYear = input.getIntInput("Input Published Year [yyyy]");
                             int editon = input.getIntInput("Input Number of Edition [ex) 2nd -> 2]");
                             int numOfCopies = input.getIntInput("Input Number of copies");
+
+                            if (numOfCopies <= 0) {
+                                System.out.println("invalid number");
+                                break;
+                            }
 
                             Book[] books = new Book[numOfCopies];
                             for (int i = 0; i < numOfCopies; i++) {
@@ -178,11 +197,35 @@ public class Driver {
 
                     switch (option2) {
                         case 1: //Customer - Add
-                            String firstName = input.getStringInput("Input First Name");
-                            String lastName = input.getStringInput("Input Last Name");
-                            LocalDate localDate = input.getLocalDate("Input Birth of date [yyyy-mm-dd]");
 
-                            Customer customer = new Customer(firstName, lastName, localDate);
+                            //First Name
+                            String firstName = input.getStringInput("Input First Name");
+                            //Last Name
+                            String lastName = input.getStringInput("Input Last Name");
+
+                            //Birth of date
+                            LocalDate localDate = null;
+                            try {
+                                localDate = input.getLocalDate("Input Birth of date [yyyy-mm-dd]");
+                            } catch (DateTimeParseException e) {
+                                System.out.println("Date Format Error");
+                                System.out.println("Format is " + "[yyyy-mm-dd]");
+                                break;
+                            }
+
+                            //Create Customer instance
+                            Customer customer;
+                            try {
+                                customer = new Customer(firstName, lastName, localDate);
+                            } catch (IvalidArgumentException e) {
+                                System.out.println(e.getMessage());
+                                break;
+                            } catch (Exception e) {
+                                System.out.println(e.getMessage());
+                                break;
+                            }
+
+                            //Add Customer
                             library.addCustomer(customer);
                             break;
                         case 2: //Customer - Display
@@ -219,10 +262,11 @@ public class Driver {
                             String customerId = input.getStringInput("Input Customer ID");
                             int numOfBorrowingBooks = input.getIntInput("Input Number of books to borrow [Max : 5 books ]");
                             if (numOfBorrowingBooks > 5) {
-                                System.out.println("more than max");
+                                System.out.println("More than max");
                                 break;
                             }
                             int[] bookIds = new int[numOfBorrowingBooks];
+                            System.out.println("Input [" + numOfBorrowingBooks + "] books ID");
                             for (int i = 0; i < numOfBorrowingBooks; i++) {
                                 bookIds[i] = input.getIntInput();
                             }
@@ -235,6 +279,7 @@ public class Driver {
                             String id = input.getStringInput("Input Customer ID");
                             int numOfReturnBooks = input.getIntInput("Input Number of books to return");
                             int[] bookIds2 = new int[numOfReturnBooks];
+                            System.out.println("Input [" + numOfReturnBooks + "] books ID");
                             for (int i = 0; i < numOfReturnBooks; i++) {
                                 bookIds2[i] = input.getIntInput();
                             }
