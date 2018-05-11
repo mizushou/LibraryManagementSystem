@@ -1,8 +1,9 @@
 package ca.ciccc.exception;
 
-public class IvalidArgumentException extends Exception {
+public class InValidArgumentException extends Exception {
 
-    public IvalidArgumentException(String message) {
+    public InValidArgumentException(String message) {
         super(message);
     }
+
 }

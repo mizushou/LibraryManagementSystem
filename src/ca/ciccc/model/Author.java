@@ -1,6 +1,7 @@
 package ca.ciccc.model;
 
-import ca.ciccc.exception.IvalidArgumentException;
+import ca.ciccc.exception.InValidArgumentException;
+import ca.ciccc.exception.InValidDateOfBirth;
 
 import java.time.LocalDate;
 
@@ -12,13 +13,13 @@ public class Author extends Person {
     public Author() {
     }
 
-    public Author(String firstName, String lastName, String pseudonym, Genre specialty) throws IvalidArgumentException {
-        super(firstName, lastName, null);
+    public Author(String firstName, String lastName, String pseudonym, Genre specialty) throws InValidArgumentException, InValidDateOfBirth {
+        super(firstName, lastName, LocalDate.parse("1900-01-01"));
         this.pseudonym = pseudonym;
         this.specialty = specialty;
     }
 
-    public Author(String firstName, String lastName, LocalDate dateOfBirth, String pseudonym, Genre specialty) throws IvalidArgumentException {
+    public Author(String firstName, String lastName, LocalDate dateOfBirth, String pseudonym, Genre specialty) throws InValidArgumentException, InValidDateOfBirth {
         super(firstName, lastName, dateOfBirth);
         this.pseudonym = pseudonym;
         this.specialty = specialty;

@@ -1,6 +1,7 @@
 package ca.ciccc.model;
 
-import ca.ciccc.exception.IvalidArgumentException;
+import ca.ciccc.exception.InValidArgumentException;
+import ca.ciccc.exception.InValidDateOfBirth;
 
 import java.time.LocalDate;
 
@@ -12,11 +13,11 @@ public class Customer extends Person {
     public Customer() {
     }
 
-    public Customer(String firstName, String lastName, LocalDate dateOfBirth) throws IvalidArgumentException {
+    public Customer(String firstName, String lastName, LocalDate dateOfBirth) throws InValidArgumentException, InValidDateOfBirth {
         super(firstName, lastName, dateOfBirth);
     }
 
-    public Customer(String firstName, String lastName, LocalDate dateOfBirth, String id, boolean active) throws IvalidArgumentException {
+    public Customer(String firstName, String lastName, LocalDate dateOfBirth, String id, boolean active) throws InValidArgumentException, InValidDateOfBirth {
         super(firstName, lastName, dateOfBirth);
         this.id = id;
         this.active = active;

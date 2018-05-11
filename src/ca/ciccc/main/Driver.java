@@ -1,7 +1,9 @@
 package ca.ciccc.main;
 
 import ca.ciccc.controller.Library;
-import ca.ciccc.exception.IvalidArgumentException;
+import ca.ciccc.exception.InValidArgumentException;
+import ca.ciccc.exception.InValidCustomerIdException;
+import ca.ciccc.exception.InValidDateOfBirth;
 import ca.ciccc.model.*;
 import ca.ciccc.view.LibraryInputReader;
 
@@ -50,7 +52,7 @@ public class Driver {
             library.addBook(books1);
             library.addBook(books2);
             library.addBook(books3);
-        } catch (IvalidArgumentException e) {
+        } catch (InValidArgumentException | InValidDateOfBirth e) {
             System.out.println(e.getMessage());
         }
 
@@ -61,7 +63,7 @@ public class Driver {
             library.addCustomer(c1);
             library.addCustomer(c2);
             library.addCustomer(c3);
-        } catch (IvalidArgumentException e) {
+        } catch (InValidArgumentException | InValidDateOfBirth e) {
             System.out.println(e.getMessage());
         }
 
@@ -140,7 +142,7 @@ public class Driver {
                             Author author = null;
                             try {
                                 author = new Author(firstName, lastName, pseudonym, genre);
-                            } catch (IvalidArgumentException e) {
+                            } catch (InValidArgumentException | InValidDateOfBirth e) {
                                 e.getMessage();
                                 break;
                             }
@@ -217,10 +219,7 @@ public class Driver {
                             Customer customer;
                             try {
                                 customer = new Customer(firstName, lastName, localDate);
-                            } catch (IvalidArgumentException e) {
-                                System.out.println(e.getMessage());
-                                break;
-                            } catch (Exception e) {
+                            } catch (InValidArgumentException | InValidDateOfBirth e) {
                                 System.out.println(e.getMessage());
                                 break;
                             }
@@ -232,16 +231,34 @@ public class Driver {
                             library.displayCustomers();
                             break;
                         case 3: //Customer - Activate
-                            String activateId = input.getStringInput("Input Customer ID");
-                            library.activateCustomer(activateId);
+                            String activateCustomerId = null;
+                            try {
+                                activateCustomerId = input.getCustomerIdInput("Input Customer ID");
+                            } catch (InValidCustomerIdException e) {
+                                System.out.println(e.getMessage());
+                                break;
+                            }
+                            library.activateCustomer(activateCustomerId);
                             break;
                         case 4: //Customer - Inactivate
-                            String inActivateId = input.getStringInput("Input Customer ID");
-                            library.inActivateCustomer(inActivateId);
+                            String inActivateCustomerId = null;
+                            try {
+                                inActivateCustomerId = input.getCustomerIdInput("Input Customer ID");
+                            } catch (InValidCustomerIdException e) {
+                                System.out.println(e.getMessage());
+                                break;
+                            }
+                            library.inActivateCustomer(inActivateCustomerId);
                             break;
                         case 5: //Customer - Remove
-                            String removeId = input.getStringInput("Input Customer ID");
-                            library.removeCustomer(removeId);
+                            String removeCustomerId = null;
+                            try {
+                                removeCustomerId = input.getCustomerIdInput("Input Customer ID");
+                            } catch (InValidCustomerIdException e) {
+                                System.out.println(e.getMessage());
+                                break;
+                            }
+                            library.removeCustomer(removeCustomerId);
                             break;
                     }
                     break;
@@ -259,7 +276,13 @@ public class Driver {
 
                     switch (option3) {
                         case 1: //Borrowing - Borrow
-                            String customerId = input.getStringInput("Input Customer ID");
+                            String borrowingCustomerId = null;
+                            try {
+                                borrowingCustomerId = input.getCustomerIdInput("Input Customer ID");
+                            } catch (InValidCustomerIdException e) {
+                                System.out.println(e.getMessage());
+                                break;
+                            }
                             int numOfBorrowingBooks = input.getIntInput("Input Number of books to borrow [Max : 5 books ]");
                             if (numOfBorrowingBooks > 5) {
                                 System.out.println("More than max");
@@ -270,20 +293,26 @@ public class Driver {
                             for (int i = 0; i < numOfBorrowingBooks; i++) {
                                 bookIds[i] = input.getIntInput();
                             }
-                            library.borrowBooks(customerId, bookIds);
+                            library.borrowBooks(borrowingCustomerId, bookIds);
                             break;
                         case 2: //Borrowing - Display
                             library.displayBorrowings();
                             break;
                         case 3: //Borrowing - Return
-                            String id = input.getStringInput("Input Customer ID");
+                            String returnCustomerId = null;
+                            try {
+                                returnCustomerId = input.getCustomerIdInput("Input Customer ID");
+                            } catch (InValidCustomerIdException e) {
+                                System.out.println(e.getMessage());
+                                break;
+                            }
                             int numOfReturnBooks = input.getIntInput("Input Number of books to return");
                             int[] bookIds2 = new int[numOfReturnBooks];
                             System.out.println("Input [" + numOfReturnBooks + "] books ID");
                             for (int i = 0; i < numOfReturnBooks; i++) {
                                 bookIds2[i] = input.getIntInput();
                             }
-                            library.returnAllBooks(id, bookIds2);
+                            library.returnAllBooks(returnCustomerId, bookIds2);
                             break;
                     }
                     break;
