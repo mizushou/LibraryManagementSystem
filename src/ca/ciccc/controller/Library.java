@@ -118,7 +118,7 @@ public class Library {
 
     public void removeBook(int bookId) {
 
-        if(!colOfBooks.containsKey(bookId)) {
+        if (!colOfBooks.containsKey(bookId)) {
             System.out.println("The Book ID [" + bookId + "] doesn't exist");
             return;
         }
@@ -388,7 +388,7 @@ public class Library {
                 System.out.println("The Book ID [" + bookId + "] doesn't exist");
                 return;
             }
-            if (!colOfBooks.get(bookId).getAvailable()){
+            if (!colOfBooks.get(bookId).getAvailable()) {
                 System.out.println("The Book ID [" + bookId + "] isn't available");
                 return;
             }
