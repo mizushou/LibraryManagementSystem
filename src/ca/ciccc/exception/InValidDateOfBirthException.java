@@ -1,9 +1,11 @@
 package ca.ciccc.exception;
 
-public class InValidDateOfBirth extends Exception {
+public class InValidDateOfBirthException extends Exception {
 
-    public InValidDateOfBirth(String message) {
+    public InValidDateOfBirthException(String message) {
+
         super(message);
+
     }
 
 }

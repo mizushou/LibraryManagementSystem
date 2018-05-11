@@ -1,6 +1,8 @@
 package ca.ciccc.view;
 
+import ca.ciccc.exception.InValidBookIdException;
 import ca.ciccc.exception.InValidCustomerIdException;
+import ca.ciccc.exception.InValidOptionException;
 
 import java.time.LocalDate;
 import java.util.Scanner;
@@ -18,21 +20,25 @@ public class LibraryInputReader extends InputReader {
 
     public int getIntInput(String message) {
         System.out.println(message);
+        System.out.print("> ");
         return super.getIntInput();
     }
 
     public double getDoubleInput(String message) {
         System.out.println(message);
+        System.out.print("> ");
         return super.getDoubleInput();
     }
 
     public String getStringInput(String message) {
         System.out.println(message);
+        System.out.print("> ");
         return super.getStringInput();
     }
 
-    public LocalDate getLocalDate(String message) {
+    public LocalDate getLocalDateInput(String message) {
         System.out.println(message);
+        System.out.print("> ");
         String dateString = super.getStringInput();
         return LocalDate.parse(dateString);
     }
@@ -40,6 +46,7 @@ public class LibraryInputReader extends InputReader {
     public String getCustomerIdInput(String message) throws InValidCustomerIdException {
 
         System.out.println(message);
+        System.out.print("> ");
         String customrId = super.getStringInput();
         if (isValidCustomerId(customrId)) {
             return customrId;
@@ -56,4 +63,52 @@ public class LibraryInputReader extends InputReader {
         return matcher.matches();
     }
 
+    public int getOptionInput(String message, String min, String max) throws InValidOptionException {
+
+        System.out.println(message);
+        System.out.print("> ");
+        int option = super.getIntInput();
+        if (isValidOption(option, min, max)) {
+            return option;
+        } else {
+            throw new InValidOptionException("Invalid Option");
+        }
+
+    }
+
+    private boolean isValidOption(int option, String min, String max) {
+        String regex = "[" + min + "-" + max + "]";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(String.valueOf(option));
+        return matcher.matches();
+    }
+
+    public int getBookIdInput(String message) throws InValidBookIdException {
+
+        System.out.println(message);
+        System.out.print("> ");
+        int bookId = super.getIntInput();
+        if (isValidBookId(bookId)) {
+            return bookId;
+        } else {
+            throw new InValidBookIdException("Invalid BookID");
+        }
+    }
+
+    private boolean isValidBookId(int bookId) {
+
+        String regex = "[1-9][0-9]{4,}";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(String.valueOf(bookId));
+        return matcher.matches();
+
+    }
+
+    public Scanner getScanner() {
+        return scanner;
+    }
+
+    public void setScanner(Scanner scanner) {
+        this.scanner = scanner;
+    }
 }

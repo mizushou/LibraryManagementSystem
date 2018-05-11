@@ -1,7 +1,7 @@
 package ca.ciccc.model;
 
 import ca.ciccc.exception.InValidArgumentException;
-import ca.ciccc.exception.InValidDateOfBirth;
+import ca.ciccc.exception.InValidDateOfBirthException;
 
 import java.time.LocalDate;
 
@@ -14,7 +14,7 @@ public abstract class Person {
     public Person() {
     }
 
-    public Person(String firstName, String lastName, LocalDate dateOfBirth) throws InValidArgumentException, InValidDateOfBirth {
+    public Person(String firstName, String lastName, LocalDate dateOfBirth) throws InValidArgumentException, InValidDateOfBirthException {
 
         setFirstName(firstName);
         setLastName(lastName);
@@ -58,10 +58,10 @@ public abstract class Person {
 
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) throws InValidDateOfBirth {
+    public void setDateOfBirth(LocalDate dateOfBirth) throws InValidDateOfBirthException {
 
         if (dateOfBirth.compareTo(LocalDate.now()) > 0) {
-            throw new InValidDateOfBirth("input exceeds the current date.");
+            throw new InValidDateOfBirthException("input exceeds the current date.");
         }
         this.dateOfBirth = dateOfBirth;
 

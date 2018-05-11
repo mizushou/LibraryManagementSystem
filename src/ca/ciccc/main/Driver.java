@@ -1,14 +1,13 @@
 package ca.ciccc.main;
 
 import ca.ciccc.controller.Library;
-import ca.ciccc.exception.InValidArgumentException;
-import ca.ciccc.exception.InValidCustomerIdException;
-import ca.ciccc.exception.InValidDateOfBirth;
+import ca.ciccc.exception.*;
 import ca.ciccc.model.*;
 import ca.ciccc.view.LibraryInputReader;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.InputMismatchException;
 
 public class Driver {
 
@@ -31,6 +30,10 @@ public class Driver {
         String nameOfLibrary = input.getStringInput("Input Library name");
         library = new Library("nameOfLibrary");
 
+        System.out.println("=============");
+        System.out.println("[" + nameOfLibrary + "] SYSTEM");
+        System.out.println("=============");
+
 
         try {
             Author a1 = new Author("Joanne", "Rowling", "J. K. Rowling", Genre.Fiction);
@@ -52,7 +55,7 @@ public class Driver {
             library.addBook(books1);
             library.addBook(books2);
             library.addBook(books3);
-        } catch (InValidArgumentException | InValidDateOfBirth e) {
+        } catch (InValidArgumentException | InValidDateOfBirthException | InValidPublishedYearException e) {
             System.out.println(e.getMessage());
         }
 
@@ -63,7 +66,7 @@ public class Driver {
             library.addCustomer(c1);
             library.addCustomer(c2);
             library.addCustomer(c3);
-        } catch (InValidArgumentException | InValidDateOfBirth e) {
+        } catch (InValidArgumentException | InValidDateOfBirthException e) {
             System.out.println(e.getMessage());
         }
 
@@ -85,7 +88,13 @@ public class Driver {
             System.out.println("0 : Exit");
             System.out.println();
 
-            int option = input.getIntInput("Input option");
+            int option = 99999;
+            try {
+                option = input.getOptionInput("Input option", "0", "3");
+            } catch (InValidOptionException e) {
+                System.out.println(e.getMessage());
+            }
+
 
             switch (option) {
                 case 1: //Book
@@ -99,16 +108,23 @@ public class Driver {
                     System.out.println("4 : Remove Book");
                     System.out.println();
 
-                    int option1 = input.getIntInput("Input option");
+                    int option1;
+                    try {
+                        option1 = input.getOptionInput("Input option", "1", "4");
+                    } catch (InValidOptionException e) {
+                        System.out.println(e.getMessage());
+                        break;
+                    }
 
                     switch (option1) {
 
                         case 1: //Book - Add
-                            String title = input.getStringInput("Input Title");
 
+                            String title = input.getStringInput("Input Title");
                             String firstName = input.getStringInput("Input Author's First Name");
                             String lastName = input.getStringInput("Input Author's Last Name");
                             String pseudonym = input.getStringInput("Input Author's Pseudonym");
+
                             System.out.println("Input Author's Specialty[Genre]");
                             System.out.println("-------------");
                             System.out.println("Select Genre");
@@ -117,9 +133,16 @@ public class Driver {
                             System.out.println("2 : Non Fiction");
                             System.out.println("3 : Biography");
                             System.out.println("4 : History");
-                            System.out.println("5 : Children");
-                            System.out.println();
-                            int genreNum = input.getIntInput();
+                            System.out.print("5 : Children");
+
+                            int genreNum;
+                            try {
+                                genreNum = input.getOptionInput("", "1", "5");
+                            } catch (InValidOptionException e) {
+                                System.out.println(e.getMessage());
+                                break;
+                            }
+
                             Genre genre = null;
                             switch (genreNum) {
                                 case 1:
@@ -142,13 +165,13 @@ public class Driver {
                             Author author = null;
                             try {
                                 author = new Author(firstName, lastName, pseudonym, genre);
-                            } catch (InValidArgumentException | InValidDateOfBirth e) {
+                            } catch (InValidArgumentException | InValidDateOfBirthException e) {
                                 e.getMessage();
                                 break;
                             }
 
                             int publishedYear = input.getIntInput("Input Published Year [yyyy]");
-                            int editon = input.getIntInput("Input Number of Edition [ex) 2nd -> 2]");
+                            int edition = input.getIntInput("Input Number of Edition [ex) 2nd -> 2]");
                             int numOfCopies = input.getIntInput("Input Number of copies");
 
                             if (numOfCopies <= 0) {
@@ -157,8 +180,14 @@ public class Driver {
                             }
 
                             Book[] books = new Book[numOfCopies];
-                            for (int i = 0; i < numOfCopies; i++) {
-                                books[i] = new Book(title, author, publishedYear, editon, genre);
+                            try {
+                                for (int i = 0; i < numOfCopies; i++) {
+
+                                    books[i] = new Book(title, author, publishedYear, edition, genre);
+                                }
+                            } catch (InValidPublishedYearException e) {
+                                System.out.println(e.getMessage());
+                                break;
                             }
 
                             library.addBook(books);
@@ -171,15 +200,30 @@ public class Driver {
                             System.out.println("-------------");
                             System.out.println("Display Option");
                             System.out.println("-------------");
-                            System.out.println("1 : No sort");
-                            System.out.println("2 : Sort by edition");
-                            System.out.println("3 : Sort by year");
-                            int diplayNum = input.getIntInput("Input Number of copies");
-                            library.displayCatalogue(diplayNum);
+                            System.out.println("1 : Sort by edition");
+                            System.out.println("2 : Sort by year");
+
+                            int displayNum;
+                            try {
+                                displayNum = input.getOptionInput("Input display option", "1", "2");
+                            } catch (InValidOptionException e) {
+                                System.out.println(e.getMessage());
+                                break;
+                            }
+
+                            library.displayCatalogue(displayNum);
                             break;
                         case 4: //Book - Remove
-                            int id = input.getIntInput("Input Book ID");
-                            library.removeBook(id);
+
+                            int bookId;
+                            try {
+                                bookId = input.getBookIdInput("Input Book ID");
+                            } catch (InValidBookIdException e) {
+                                System.out.println(e.getMessage());
+                                break;
+                            }
+
+                            library.removeBook(bookId);
                             break;
                     }
                     break;
@@ -195,7 +239,14 @@ public class Driver {
                     System.out.println("5 : Remove Customer");
                     System.out.println();
 
-                    int option2 = input.getIntInput("Input option");
+                    int option2;
+                    try {
+                        option2 = input.getOptionInput("Input option", "1", "5");
+                    } catch (InValidOptionException e) {
+                        System.out.println(e.getMessage());
+                        break;
+                    }
+
 
                     switch (option2) {
                         case 1: //Customer - Add
@@ -208,7 +259,7 @@ public class Driver {
                             //Birth of date
                             LocalDate localDate = null;
                             try {
-                                localDate = input.getLocalDate("Input Birth of date [yyyy-mm-dd]");
+                                localDate = input.getLocalDateInput("Input Birth of date [yyyy-mm-dd]");
                             } catch (DateTimeParseException e) {
                                 System.out.println("Date Format Error");
                                 System.out.println("Format is " + "[yyyy-mm-dd]");
@@ -219,7 +270,7 @@ public class Driver {
                             Customer customer;
                             try {
                                 customer = new Customer(firstName, lastName, localDate);
-                            } catch (InValidArgumentException | InValidDateOfBirth e) {
+                            } catch (InValidArgumentException | InValidDateOfBirthException e) {
                                 System.out.println(e.getMessage());
                                 break;
                             }
@@ -272,7 +323,14 @@ public class Driver {
                     System.out.println("3 : Return");
                     System.out.println();
 
-                    int option3 = input.getIntInput("Input option");
+                    int option3;
+                    try {
+                        option3 = input.getOptionInput("Input option", "1", "3");
+                    } catch (InValidOptionException e) {
+                        System.out.println(e.getMessage());
+                        break;
+                    }
+
 
                     switch (option3) {
                         case 1: //Borrowing - Borrow
@@ -290,9 +348,15 @@ public class Driver {
                             }
                             int[] bookIds = new int[numOfBorrowingBooks];
                             System.out.println("Input [" + numOfBorrowingBooks + "] books ID");
-                            for (int i = 0; i < numOfBorrowingBooks; i++) {
-                                bookIds[i] = input.getIntInput();
+                            try {
+                                for (int i = 0; i < numOfBorrowingBooks; i++) {
+                                    bookIds[i] = input.getBookIdInput("");
+                                }
+                            } catch (InValidBookIdException e) {
+                                System.out.println(e.getMessage());
+                                break;
                             }
+
                             library.borrowBooks(borrowingCustomerId, bookIds);
                             break;
                         case 2: //Borrowing - Display
@@ -309,8 +373,13 @@ public class Driver {
                             int numOfReturnBooks = input.getIntInput("Input Number of books to return");
                             int[] bookIds2 = new int[numOfReturnBooks];
                             System.out.println("Input [" + numOfReturnBooks + "] books ID");
-                            for (int i = 0; i < numOfReturnBooks; i++) {
-                                bookIds2[i] = input.getIntInput();
+                            try {
+                                for (int i = 0; i < numOfReturnBooks; i++) {
+                                    bookIds2[i] = input.getBookIdInput("");
+                                }
+                            } catch (InValidBookIdException e) {
+                                System.out.println(e.getMessage());
+                                break;
                             }
                             library.returnAllBooks(returnCustomerId, bookIds2);
                             break;
